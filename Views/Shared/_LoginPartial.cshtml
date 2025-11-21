@@ -1,0 +1,56 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<ul class="navbar-nav align-items-center"> @* تم إضافة align-items-center لمحاذاة العناصر عمودياً في الوسط *@
+
+@* --- عند تسجيل دخول المستخدم --- *@
+@if (SignInManager.IsSignedIn(User))
+{
+    @* عنصر عرض اسم المستخدم والإدارة *@
+    <li class="nav-item me-3"> @* me-3 لإضافة مسافة يمينية *@
+        <a class="nav-link text-white" 
+           asp-area="Identity" 
+           asp-page="/Account/Manage/Index" 
+           title="Manage">
+           <i class="bi bi-person-circle"></i> Hello @User.Identity?.Name
+        </a>
+    </li>
+
+    @* عنصر زر تسجيل الخروج (Logout) - يفضل استخدام لون يحمل معنى (Danger) *@
+    <li class="nav-item">
+        <form class="form-inline" 
+              asp-area="Identity" 
+              asp-page="/Account/Logout" 
+              asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"
+              method="post">
+            <button type="submit" 
+                    class="btn btn-danger btn-sm"> @* استخدام btn-danger لجعل الزر بارزاً باللون الأحمر *@
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </button>
+        </form>
+    </li>
+}
+
+@* --- عند عدم تسجيل دخول المستخدم --- *@
+else
+{
+    @* عنصر رابط التسجيل (Register) - زر outline (إطار) لإعطاء أولوية أقل من الدخول *@
+    <li class="nav-item me-2"> @* me-2 لإضافة مسافة بين الزرين *@
+        <a class="btn btn-outline-light btn-sm" 
+           asp-area="Identity" 
+           asp-page="/Account/Register">
+           <i class="bi bi-person-plus"></i> Register
+        </a>
+    </li>
+    
+    @* عنصر رابط تسجيل الدخول (Login) - زر primary (أساسي) لإعطاء الأولوية القصوى *@
+    <li class="nav-item">
+        <a class="btn btn-primary btn-sm" 
+           asp-area="Identity" 
+           asp-page="/Account/Login">
+           <i class="bi bi-box-arrow-in-right"></i> Login
+        </a>
+    </li>
+}
+</ul>

@@ -1,0 +1,228 @@
+﻿<!-- Views/Home/Index.cshtml -->
+@model IEnumerable<ArticlProject.Models.Article>
+
+@{
+    ViewData["Title"] = "الرئيسية";
+    var distinctTypes = Model?.Select(a => a.Type).Distinct().ToList() ?? new List<string>();
+}
+
+<!-- سيكشن الهيرو -->
+<section class="hero-section bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">مرحباً بك في عالم المعرفة</h1>
+                <p class="lead mb-4">منصة متكاملة للكتاب والمفكرين لنشر الأفكار والإبداعات. اكتشف مقالات متنوعة في مختلف المجالات من أفضل الكتاب العرب.</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="#articles" class="btn btn-light btn-lg">استكشف المقالات</a>
+                    <a asp-controller="Articles" asp-action="Create" class="btn btn-outline-light btn-lg">اكتب مقالك</a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="bi bi-journal-text display-1 opacity-75"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- سيكشن الإحصائيات -->
+<section class="stats-section py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-file-text display-4 text-primary mb-3"></i>
+                        <h3 class="fw-bold">@(Model?.Count() ?? 0)</h3>
+                        <p class="text-muted">مقال منشور</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-people display-4 text-success mb-3"></i>
+                        <h3 class="fw-bold">@(ViewBag.AuthorsCount ?? 0)</h3>
+                        <p class="text-muted">كاتب نشط</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-tags display-4 text-warning mb-3"></i>
+                        <h3 class="fw-bold">@(distinctTypes.Count)</h3>
+                        <p class="text-muted">تصنيف متنوع</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- سيكشن المقالات مع الفلترة -->
+<section id="articles" class="articles-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center mb-5 fw-bold">أحدث المقالات</h2>
+
+                <!-- فلترة حسب النوع -->
+                <div class="text-center mb-4">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary filter-btn active" data-filter="all">الكل</button>
+                        @foreach (var type in distinctTypes)
+                        {
+                            <button type="button" class="btn btn-outline-primary filter-btn" data-filter="@type">@type</button>
+                        }
+                    </div>
+                </div>
+
+                <!-- قائمة المقالات -->
+                <div class="row" id="articles-container">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var article in Model)
+                        {
+                            <div class="col-lg-4 col-md-6 mb-4 article-item" data-type="@article.Type">
+                                <div class="card article-card h-100 shadow-sm border-0">
+                                    @if (!string.IsNullOrEmpty(article.Image))
+                                    {
+                                        <img src="~/images/@article.Image" class="card-img-top" alt="@article.Title" style="height: 200px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                                            <i class="bi bi-image text-white display-4"></i>
+                                        </div>
+                                    }
+
+                                    <div class="card-body d-flex flex-column">
+                                        <!-- نوع المقال بارز -->
+                                        <div class="mb-3">
+                                            <span class="badge bg-primary fs-6">@article.Type</span>
+                                        </div>
+
+                                        <h5 class="card-title fw-bold">@article.Title</h5>
+                                        <p class="card-text flex-grow-1">@article.Description.Substring(0, Math.Min(150, article.Description.Length))...</p>
+
+                                        <div class="mt-auto">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-person me-1"></i>@article.Author?.Name
+                                                </small>
+                                                <small class="text-muted">
+                                                    <i class="bi bi-calendar me-1"></i>@article.CreatedDate.ToString("yyyy-MM-dd")
+                                                </small>
+                                            </div>
+                                            <div class="d-grid gap-2 mt-3">
+                                                <a asp-controller="Articles" asp-action="Details" asp-route-id="@article.ArticleId" class="btn btn-outline-primary">قراءة المزيد</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12 text-center">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>لا توجد مقالات متاحة حالياً.
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- سيكشن عن الموقع -->
+<section class="about-section py-5 bg-dark text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-4">من نحن</h2>
+                <p class="lead mb-4">
+                    منصة مقالات عربية تهدف إلى نشر المعرفة والثقافة بمحتوى عالي الجودة.
+                    نحن نؤمن بقوة الكلمة وقدرتها على إحداث التغيير الإيجابي في المجتمع.
+                </p>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+                            <span>محتوى عالي الجودة</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+                            <span>كتاب متخصصون</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+                            <span>تصنيفات متنوعة</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+                            <span>واجهة مستخدم سهلة</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="bi bi-globe2 display-1 text-primary"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- سيكشن دعوة للعمل -->
+<section class="cta-section py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-4">انضم إلى مجتمعنا</h2>
+        <p class="lead mb-4">شاركنا أفكارك وخبراتك وساهم في إثراء المحتوى العربي</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a asp-controller="Articles" asp-action="Create" class="btn btn-light btn-lg">
+                <i class="bi bi-pencil me-2"></i>ابدأ الكتابة
+            </a>
+            <a asp-controller="Authors" asp-action="Create" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-person-plus me-2"></i>انضم ككاتب
+            </a>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // فلترة المقالات حسب النوع
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const articleItems = document.querySelectorAll('.article-item');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // إزالة النشط من جميع الأزرار
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // إضافة النشط للزر المختار
+                    this.classList.add('active');
+
+                    const filter = this.getAttribute('data-filter');
+
+                    articleItems.forEach(item => {
+                        if (filter === 'all' || item.getAttribute('data-type') === filter) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}

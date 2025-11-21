@@ -1,0 +1,47 @@
+﻿@model ArticlProject.Models.Author
+
+@{
+    ViewData["Title"] = "إضافة مؤلف جديد";
+}
+
+<div class="container">
+    <h1>إضافة مؤلف جديد</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="About" class="control-label"></label>
+                    <textarea asp-for="About" class="form-control" rows="5" placeholder="اكتب نبذة عن المؤلف..."></textarea>
+                    <span asp-validation-for="About" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ImageFile" class="control-label"></label>
+                    <input asp-for="ImageFile" class="form-control" type="file" accept="image/*" />
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                    <small class="form-text text-muted">يمكنك رفع صورة شخصية للمؤلف</small>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="إضافة" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">العودة للقائمة</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

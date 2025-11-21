@@ -1,0 +1,56 @@
+﻿@model ArticlProject.Models.Author
+
+@{
+    ViewData["Title"] = "تفاصيل المؤلف";
+}
+
+<div class="container">
+    <h1>تفاصيل المؤلف</h1>
+
+    <div class="row">
+        <div class="col-md-4">
+            @if (!string.IsNullOrEmpty(Model.Image))
+            {
+                <img src="~/images/@Model.Image" class="img-fluid rounded" alt="@Model.Name">
+            }
+        </div>
+        <div class="col-md-8">
+            <dl class="row">
+                <dt class="col-sm-3">الاسم:</dt>
+                <dd class="col-sm-9">@Model.Name</dd>
+
+                <dt class="col-sm-3">نبذة:</dt>
+                <dd class="col-sm-9">@Model.About</dd>
+
+                <dt class="col-sm-3">عدد المقالات:</dt>
+                <dd class="col-sm-9">@Model.Articles.Count</dd>
+            </dl>
+
+            <div class="mt-4">
+                <h4>مقالات المؤلف:</h4>
+                @if (Model.Articles.Any())
+                {
+                    <ul class="list-group">
+                        @foreach (var article in Model.Articles)
+                        {
+                            <li class="list-group-item">
+                                <h6>@article.Title</h6>
+                                <p class="mb-1">@article.Description.Substring(0, Math.Min(100, article.Description.Length))...</p>
+                                <small class="text-muted">@article.Type - @article.CreatedDate.ToString("yyyy-MM-dd")</small>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted">لا توجد مقالات لهذا المؤلف حتى الآن.</p>
+                }
+            </div>
+
+            <div class="mt-3">
+                <a asp-action="Edit" asp-route-id="@Model.AuthorId" class="btn btn-warning">تعديل</a>
+                <a asp-action="Index" class="btn btn-secondary">العودة للقائمة</a>
+            </div>
+        </div>
+    </div>
+</div>

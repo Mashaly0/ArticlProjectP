@@ -1,0 +1,60 @@
+﻿@model ArticlProject.Models.Author
+
+@{
+    ViewData["Title"] = "حذف المؤلف";
+}
+
+<div class="container">
+    <h1>حذف المؤلف</h1>
+
+    <h3>هل أنت متأكد من أنك تريد حذف هذا المؤلف؟</h3>
+
+    <div class="alert alert-warning">
+        <strong>تحذير!</strong> سيتم حذف جميع المقالات المرتبطة بهذا المؤلف أيضاً.
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="row">
+                <dt class="col-sm-4">الاسم:</dt>
+                <dd class="col-sm-8">@Model.Name</dd>
+
+                <dt class="col-sm-4">نبذة:</dt>
+                <dd class="col-sm-8">@Model.About</dd>
+
+                <dt class="col-sm-4">عدد المقالات:</dt>
+                <dd class="col-sm-8">@Model.Articles.Count</dd>
+            </dl>
+
+            @if (Model.Articles.Any())
+            {
+                <div class="alert alert-danger">
+                    <strong>المقالات التي سيتم حذفها:</strong>
+                    <ul>
+                        @foreach (var article in Model.Articles.Take(5))
+                        {
+                            <li>@article.Title</li>
+                        }
+                        @if (Model.Articles.Count > 5)
+                        {
+                            <li>...و @(Model.Articles.Count - 5) مقالة أخرى</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="AuthorId" />
+                <input type="submit" value="حذف" class="btn btn-danger" />
+                <a asp-action="Index" class="btn btn-secondary">إلغاء</a>
+            </form>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Image))
+        {
+            <div class="col-md-6">
+                <img src="~/images/@Model.Image" class="img-fluid rounded" alt="@Model.Name">
+            </div>
+        }
+    </div>
+</div>
